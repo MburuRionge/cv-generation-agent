@@ -1,8 +1,9 @@
 beautifulsoup4
 pytz
 feedparser
-openai
+openai==0.28.1
 PyPDF2
 python-docx
 requests
 chromadb
+venv
