@@ -1,0 +1,8 @@
+beautifulsoup4
+pytz
+feedparser
+openai
+PyPDF2
+python-docx
+requests
+chromadb

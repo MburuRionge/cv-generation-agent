@@ -15,25 +15,28 @@ import feedparser
 import openai  # For AI-powered content generation
 from PyPDF2 import PdfReader  # For parsing existing resumes
 import docx  # For parsing Word documents
+from dotenv import load_dotenv
+# Load environment variables from .env
+load_dotenv()
 
 # Configuration
 CONFIG = {
-    "user_profile": "profile.json",
-    "applications_db": "applications.db",
-    "output_folder": "generated_applications",
+    "user_profile": os.getenv("USER_PROFILE", "profile.json"),
+    "applications_db": os.getenv("APPLICATIONS_DB", "applications.db"),
+    "output_folder": os.getenv("OUTPUT_FOLDER", "generated_applications"),
     "job_sources": {
         "indeed": "https://rss.indeed.com/rss?q={query}&l={location}",
         "linkedin": "https://www.linkedin.com/jobs/search/?keywords={query}&location={location}",
         "glassdoor": "https://www.glassdoor.com/Job/jobs.htm?suggestCount=0&suggestChosen=false&clickSource=searchBtn&typedKeyword={query}&sc.keyword={query}&locT=C&locId={location}"
     },
     "email_alerts": {
-        "enabled": True,
+        "enabled": os.getenv("EMAIL_ALERTS_ENABLED", "True").lower() == "true",
         "smtp_server": "smtp.gmail.com",
         "smtp_port": 587,
-        "email": "your_email@gmail.com",
-        "password": "your_password"
+        "email": os.getenv("EMAIL_USER",),
+        "password": os.getenv("EMAIL_PASSWORD")
     },
-    "openai_api_key": "your_openai_api_key"
+    "openai_api_key": os.getenv("OPEN_API_KEY"),
 }
 
 @dataclass
@@ -67,7 +70,7 @@ class CVGenerationAgent:
         
     def setup_openai(self):
         """Initialize OpenAI API"""
-        openai.api_key = CONFIG["openai_api_key"]
+        openai.api_key = os.getenv("OPEN_API_KEY")
         
     def ensure_output_folder(self):
         """Create output folder if it doesn't exist"""
