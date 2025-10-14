@@ -1,0 +1,64 @@
+from flask import Blueprint, request, render_template, redirect, url_for, flash
+from flask_login import login_user, logout_user, login_required, current_user
+from app.models import User, UserProfile
+from app import db
+
+auth_bp = Blueprint('auth', __name__)
+
+@auth_bp.route('/register', methods=['GET', 'POST'])
+def register():
+    if current_user.is_athenticated:
+        return redirect(url_for('main.dashboard'))
+    
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+        
+        # Check if user already exists
+        if User.query.filter_by(email=email).first():
+            flash('Email already registered. Please login.', 'error')
+            return redirect(url_for('auth.login'))
+        
+        # Create new user
+        user = User(email=email)
+        user.set_password(password)
+        db.session.add(user)
+        
+        # Create associated user profile
+        profile = UserProfile(user_id=user.id)
+        db.session.add(profile)
+        
+        db.session.commit()
+        
+        flash('Registration successful! Please complete your profile.', 'success')
+        login_user(user)
+        return redirect(url_for('profile.edit'))
+    
+    return render_template('auth/register.html')
+
+@auth_bp.route('/login', methods=["GET", "POST"])
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('main.dashboard'))
+    
+    if request.method == "POST":
+        email = request.form.get('email')
+        password = request.form.get('password')
+        user = User.query.filter_by(email=email).first()
+        
+        if user and user.check_password(password):
+            login_user(user)
+            next_page = request.args.get('next')
+            flash('Login successful!', 'success')
+            return redirect(next_page or url_for('main.dashboard'))
+        else:
+            flash('Invalid email or passwrd', 'error')
+            
+    return render_template('auth/login.html')
+
+@auth_bp.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash('You have been logged out.', 'info')
+    return redirect(url_for('auth.login'))
