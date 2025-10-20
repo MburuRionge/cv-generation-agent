@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Job Application Agent{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <h1>Welcome, {{ current_user.profile.name or current_user.email }}!</h1>
+        <p class="lead">Your job search assistant is ready to help.</p>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{{ url_for('jobs.search') }}" class="btn btn-primary btn-lg">
+            <i class="fas fa-search"></i> Find Jobs
+        </a>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <h5 class="card-title">{{ stats.applications_sent }}</h5>
+                <p class="card-text">Applications Sent</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <h5 class="card-title">{{ stats.interviews }}</h5>
+                <p class="card-text">Interviews</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <h5 class="card-title">{{ stats.pending }}</h5>
+                <p class="card-text">Pending</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <h5 class="card-title">{{ stats.match_rate }}%</h5>
+                <p class="card-text">Avg Match Rate</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Recent Applications</h5>
+            </div>
+            <div class="card-body">
+                {% if recent_applications %}
+                    {% for app in recent_applications %}
+                    <div class="d-flex justify-content-between align-items-center border-bottom py-2">
+                        <div>
+                            <h6 class="mb-0">{{ app.job_title }}</h6>
+                            <small class="text-muted">{{ app.company }}</small>
+                        </div>
+                        <span class="badge bg-{{ 'success' if app.status == 'interview' else 'primary' }}">
+                            {{ app.status|title }}
+                        </span>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted">No applications yet. <a href="{{ url_for('jobs.search') }}">Start searching for jobs!</a></p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Profile Completeness</h5>
+            </div>
+            <div class="card-body">
+                <div class="progress mb-3">
+                    <div class="progress-bar" role="progressbar" style="width: {{ profile_completeness }}%">
+                        {{ profile_completeness }}%
+                    </div>
+                </div>
+                <p>Complete your profile to get better job matches.</p>
+                <a href="{{ url_for('profile.edit') }}" class="btn btn-outline-primary">
+                    <i class="fas fa-edit"></i> Edit Profile
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
