@@ -3,6 +3,7 @@
 {% block title %}Dashboard - Job Application Agent{% endblock %}
 
 {% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
 <div class="row">
     <div class="col-md-8">
         <h1>Welcome, {{ current_user.profile.name or current_user.email }}!</h1>
@@ -81,11 +82,19 @@
             <div class="card-header">
                 <h5>Profile Completeness</h5>
             </div>
-            <div class="card-body">
                 <div class="progress mb-3">
-                    <div class="progress-bar" role="progressbar" style="width: {{ profile_completeness }}%">
+                    <progress id="profile-completeness"
+                              value="{{ profile_completeness }}"
+                              max="100"
+                              role="progressbar"
+                              aria-valuemin="0"
+                              aria-valuemax="100"
+                              aria-valuenow="{{ profile_completeness|int }}"
+                              aria-label="Profile completeness: {{ profile_completeness }} percent"
+                              title="Profile completeness: {{ profile_completeness }}%">
                         {{ profile_completeness }}%
-                    </div>
+                    </progress>
+                </div>
                 </div>
                 <p>Complete your profile to get better job matches.</p>
                 <a href="{{ url_for('profile.edit') }}" class="btn btn-outline-primary">

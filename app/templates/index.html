@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="jumbotron">
+    <h1 class="display-4">Job Application Agent</h1>
+    <p class="lead">AI-powered job search assistant that helps you find and apply to jobs automatically.</p>
+    <hr class="my-4">
+    <p>Get started by creating an account and setting up your profile.</p>
+    <a class="btn btn-primary btn-lg" href="{{ url_for('auth.register') }}">Get Started</a>
+</div>
+{% endblock %}

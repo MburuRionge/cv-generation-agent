@@ -8,6 +8,8 @@ import logging
 from logging.handlers import RotatingFileHandler
 import os
 
+load_dotenv()
+
 db = SQLAlchemy()
 migrate = Migrate()
 login_manager = LoginManager()
@@ -15,6 +17,9 @@ cache = Cache()
 
 def create_app(config_class=Config):
     app = Flask(__name__)
+    app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev')
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///app.db')
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config.from_object(config_class)
     
     # Initialize extensions
