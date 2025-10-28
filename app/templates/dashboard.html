@@ -89,12 +89,22 @@
                               role="progressbar"
                               aria-valuemin="0"
                               aria-valuemax="100"
-                              aria-valuenow="{{ profile_completeness|int }}"
                               aria-label="Profile completeness: {{ profile_completeness }} percent"
                               title="Profile completeness: {{ profile_completeness }}%">
                         {{ profile_completeness }}%
                     </progress>
                 </div>
+                <script>
+                    (function() {
+                        var el = document.getElementById('profile-completeness');
+                        if (el) {
+                            var val = parseInt(el.getAttribute('value'), 10);
+                            if (!isNaN(val)) {
+                                el.setAttribute('aria-valuenow', val);
+                            }
+                        }
+                    })();
+                </script>
                 </div>
                 <p>Complete your profile to get better job matches.</p>
                 <a href="{{ url_for('profile.edit') }}" class="btn btn-outline-primary">

@@ -8,7 +8,6 @@ import logging
 from logging.handlers import RotatingFileHandler
 import os
 
-load_dotenv()
 
 db = SQLAlchemy()
 migrate = Migrate()

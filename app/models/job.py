@@ -15,7 +15,7 @@ class JobPosting(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     # Relationships
-    applications = db.relationsip('Application', backref='dynamic')
+    applications = db.relationship('Application', backref='dynamic')
     
     def to_dict(self):
         return {
