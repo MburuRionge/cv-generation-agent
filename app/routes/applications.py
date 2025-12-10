@@ -9,9 +9,8 @@ import csv
 import io
 from sqlalchemy import desc, func
 
-applications_bp = Blueprint('applications', __name__, url_prefix='/appliactions')
-
-@applications_bp('/')
+applications_bp = Blueprint('applications', __name__)
+@applications_bp.route('/')
 @login_required
 def list_applications():
     """Display paginated list of user's applications with filtering"""
@@ -24,7 +23,7 @@ def list_applications():
         sort_order = request.args.get('order', 'desc')
         
         #Base query
-        query = Application.query.fiter_by(user_id=current_user.id)
+        query = Application.query.filter_by(user_id=current_user.id)
         
         #Apply filters
         if status_filter != 'all':
@@ -39,21 +38,15 @@ def list_applications():
         #Apply sorting
         if sort_by == 'company':
             query = query.join(JobPosting)
-            if sort_order == 'asc':
-                query = query.order_by(JobPosting.company.asc())
-            else:
-                query = query.order_by(JobPosting.company.desc())
+            order_col = JobPosting.company.asc() if sort_order == 'asc' else JobPosting.company.desc()
         elif sort_by == 'applied_date':
-            if sort_order == 'asc':
-                query = query.order_by(Application.applied_date.asc())
-            else:
-                query = query.order_by(Application.applied_date.desc())
+            order_col = Application.applied_date.asc() if sort_order == 'asc' else Application.applied_date.desc()
         elif sort_by == 'status':
-            if sort_order == 'asc':
-                query = query.order_by(Application.status.asc())
-            else:
-                query = query.order_by(Application.status.desc())
-                
+            order_col = Application.status.asc() if sort_order == 'asc' else Application.status.desc()
+        else:
+            order_col = Application.applied_date.desc()
+            
+        query = query.order_by(order_col) 
         #Pagination
         per_page = 10
         application_page = query.paginate(
@@ -76,7 +69,7 @@ def list_applications():
     
 @applications_bp.route('/api/applications')
 @login_required
-def api_list_applictions():
+def api_list_applications():
     """JSON API endpoint for applications(for AJAX requests)"""
     try:
         applications = Application.query.filter_by(user_id=current_user.id).all()
@@ -245,7 +238,7 @@ def get_application_stats(user_id):
     total = Application.query.filter_by(user_id=user_id).count()
     interviews = Application.query.filter_by(user_id=user_id, status='interview').count()
     offers = Application.query.filter_by(user_id=user_id, status='offer').count()
-    rejected = Application.query.filetr_by(user_id=user_id, status='rejected').count()
+    rejected = Application.query.filter_by(user_id=user_id, status='rejected').count()
     
     return {
         'total': total,
